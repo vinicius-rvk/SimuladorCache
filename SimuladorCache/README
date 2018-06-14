@@ -1,0 +1,37 @@
+# Simulador cache
+*Subject - IOAC (INTRODUÇÃO A ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES)
+
+This project is a simulator of cache memory with direct map cache, fully-associative map cache end n-way set associative map cache.
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+### Prerequisites
+
+A java virtual machine to run.
+
+## Running the tests
+
+configure an arquive config.txt
+
+with this order:
+<words>
+<lines>
+<blocks>
+<kind of Map>
+<n-way map> #IF NOT NECESSARY, PUT <ZERO>
+<line replacement policy>
+
+Two ways to run:
+
+In a terminal goes to the directory /SimuladorCache/src;
+run the command 'javac *.java'
+and command 'java SimuladorCache'
+
+OR 
+Import in an IDE eclipse and run.
+
+## Authors
+
+* **Roberto Vinicius kuo**
