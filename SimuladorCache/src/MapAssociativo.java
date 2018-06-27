@@ -10,26 +10,39 @@ public class MapAssociativo implements Mapeamento{
     private Cache cache;
     private Memoria memoria;
     private int linhaDisponivel;
-    private int []referenciaTempo;
-    private int []referenciaFrequencia;
+    private int []referenciaTempo; //conforme vai sendo acessado, as referencias serão incrementadas
+    private int []referenciaFrequencia; //conforme vai sendo acessado, as referencias serão incrementadas
     private int politicaSubstituicao;
     private int tempo;
-
+    /**
+     * Cria cache e memoria
+     * flush na memoria para iniciar sem endereço já alocado
+     * @param qtsPalavra
+     * @param qtdLinha
+     * @param qtdBloco
+     * @param tipo
+     */
     public MapAssociativo(int qtsPalavra, int qtdLinha, int qtdBloco, int tipo) {
         cache = new Cache(qtdLinha, qtsPalavra);
         cache.flush();
         memoria = new Memoria(qtdBloco, qtsPalavra);
         this.politicaSubstituicao = tipo;
-        iniciaReferencia(qtdLinha);
+        iniciaReferencia(qtdLinha); // inicia referencias para politicas de troca;
         linhaDisponivel = -1;// para quando for FIFO ele iniciar no 0
     }
-    
+    /**
+     * Hit caso o endereço esteja na cache
+     * Miss caso o endereço nao seja encontrado na cache; aloca o bloco, que contem o endereço procurado, da memória na cache.
+     * Politica de substituição: MAPEAMENTO ASSOCIATIVO
+     * Sobrescreve função da interface Mapeamento
+     * 
+     */
     public void read(int endereco){
         if(!cache.getEndereco(endereco)){
-            nextDisponivel();
+            nextDisponivel(); // veja função
             System.out.println("MISS -> alocado na linha "+(linhaDisponivel)+" o bloco "+memoria.getBloco(endereco).getChave());
             cache.setLinha(linhaDisponivel , memoria.getBloco(endereco));
-            referenciaTempo[linhaDisponivel] = ++tempo;
+            referenciaTempo[linhaDisponivel] = ++tempo; 
             referenciaFrequencia[linhaDisponivel] = 1;
         }else{
             System.out.println(" -> HIT -> linha "+(cache.getNuneroLinha(endereco)+1));
@@ -39,6 +52,11 @@ public class MapAssociativo implements Mapeamento{
         }
         
     }
+    /**
+     * Grava no bloco e na memoria o novo valor
+     * substitui na cache conforme politica de substituição
+     */
+    @Override
     public void write(int endereco, int valor){
         Bloco novo = memoria.getBloco(endereco);
         novo.setValor(endereco, valor);
@@ -57,12 +75,19 @@ public class MapAssociativo implements Mapeamento{
         	referenciaTempo[cache.getNuneroLinha(endereco)] = ++tempo;
         }        
     }
-    
+    /**
+     * Printa no temrinal o estado atual da cache e da memoria.
+     */
+    @Override
     public void show(){
     	System.out.println("CACHE L1");
         cache.show();
         memoria.show();
     }
+    /**
+     * A partir do tipo da politica, seta quem será a proxima linha a ser substituida
+     * @return linhaDisponivel - proxima linha disponivel
+     */
     private int nextDisponivel(){
         switch (politicaSubstituicao){
             case 1:// ALEATORIO
@@ -85,6 +110,11 @@ public class MapAssociativo implements Mapeamento{
         }
         return linhaDisponivel;
     }
+    /**
+     * Inicia referencias para politica de substituição
+     * Todos começão com zero.  
+     * @param qtdLinha
+     */
     private void iniciaReferencia(int qtdLinha){
         referenciaFrequencia = new int[qtdLinha];
         referenciaTempo = new int[qtdLinha];
@@ -93,6 +123,11 @@ public class MapAssociativo implements Mapeamento{
             referenciaTempo[i] = 0;
         }
     }
+    /**
+     * Recebe um array de referencia e retorna o menor valor dentre os indices.
+     * @param referencia
+     * @return
+     */
     private int menorDaReferencia(int []referencia){
         int menor = Integer.MAX_VALUE;
         int indiceMenor = 0;

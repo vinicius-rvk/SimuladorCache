@@ -1,3 +1,4 @@
+
 import java.util.Random;
 
 public class MapParcialmenteAssociativo implements Mapeamento {
@@ -13,19 +14,26 @@ public class MapParcialmenteAssociativo implements Mapeamento {
     private int qtdLinha;
 
 
-    
+    /**
+     * 
+     * @param qtdPalavra
+     * @param qtdLinha
+     * @param qtdBloco
+     * @param politicaSubstituicao
+     * @param qtdConjunto
+     */
 	public MapParcialmenteAssociativo(int qtdPalavra, int qtdLinha, int qtdBloco, int politicaSubstituicao, int qtdConjunto) {
 		memoria = new Memoria(qtdBloco, qtdPalavra);
 		cache = new Cache[(qtdConjunto)];
 		linhaDisponivel = new int[(qtdConjunto)];
-		for (int i = 0; i < linhaDisponivel.length; i++) {
+		for (int i = 0; i < linhaDisponivel.length; i++) { // inicia a linha disponivel dos conjuntos
 			if(politicaSubstituicao == 2) {
 				linhaDisponivel[i] = -1;
 			}else {
 				linhaDisponivel[i] = 0;
 			}
 		}
-		for (int i = 0; i < cache.length; i++) {
+		for (int i = 0; i < cache.length; i++) { // flush nos conjuntos da cache
 			cache[i] = new Cache(qtdLinha/qtdConjunto, qtdPalavra);
 			cache[i].flush();
 		}
@@ -35,7 +43,12 @@ public class MapParcialmenteAssociativo implements Mapeamento {
 		this.qtdPalavra = qtdPalavra;
 		iniciaReferencia(qtdLinha/qtdConjunto);
 	}
-
+	/**
+     * Hit caso o endereço esteja na cache
+     * Miss caso o endereço nao seja encontrado na cache; aloca o bloco, que contem o endereço procurado, da memória na cache.
+     * Politica de substituição: MAPEAMENTO PARCIALMENTE ASSOCIATIVO
+     * Sobrescreve função da interface Mapeamento
+     */
 	@Override
 	public void read(int endereco) {
 		if(!cache[n_Conjunto(endereco)].getEndereco(endereco)){
@@ -50,7 +63,10 @@ public class MapParcialmenteAssociativo implements Mapeamento {
         	referenciaTempo[n_Conjunto(endereco)][cache[n_Conjunto(endereco)].getNuneroLinha(endereco)] = ++tempo;
         }
 	}
-
+	/**
+     * Grava no bloco e na memoria o novo valor
+     * substitui na cache conforme politica de substituição
+     */
 	@Override
 	public void write(int endereco, int valor) {
 		Bloco novo = memoria.getBloco(endereco);
@@ -70,7 +86,9 @@ public class MapParcialmenteAssociativo implements Mapeamento {
         	referenciaTempo[n_Conjunto(endereco)][cache[n_Conjunto(endereco)].getNuneroLinha(endereco)] = ++tempo;
         }
 	}
-
+	/**
+     * Printa no temrinal o estado atual da cache e da memoria.
+     */
 	@Override
 	public void show() {
 		for (int i = 0; i < cache.length; i++) {
@@ -79,6 +97,11 @@ public class MapParcialmenteAssociativo implements Mapeamento {
 		}
 		memoria.show();
 	}
+	/**
+	 * inicia as referencias dos conjuntos
+	 * matriz de referencia, pois pra cada conjunto teremos uma referencia diferente
+	 * @param qtdLinha
+	 */
 	private void iniciaReferencia(int qtdLinha){
         referenciaFrequencia = new int[qtdConjunto][];
         referenciaTempo = new int[qtdConjunto][];
@@ -91,6 +114,11 @@ public class MapParcialmenteAssociativo implements Mapeamento {
 			}
         }
     }
+	/**
+     * A partir do tipo da politica, seta quem será a proxima linha a ser substituida
+     * Modifica a linhda disponivel do conjunto
+     * @return linhaDisponivel - proxima linha disponivel
+     */
 	private int nextDisponivel(int endereco){
         switch (politicaSubstituicao){
             case 1:// ALEATORIO
@@ -114,9 +142,19 @@ public class MapParcialmenteAssociativo implements Mapeamento {
         System.out.println(linhaDisponivel[n_Conjunto(endereco)]);
         return linhaDisponivel[n_Conjunto(endereco)];
     }
+	/**
+	 * Retorna o numero do conjunto q contem o endereço informado
+	 * @param endereco
+	 * @return
+	 */
 	private int n_Conjunto(int endereco) {
 		return (endereco/qtdPalavra)%qtdConjunto;
 	}
+	/**
+     * Recebe um array de referencia e retorna o menor valor dentre os indices.
+     * @param referencia
+     * @return
+     */
     private int menorDaReferencia(int []referencia){
         int menor = Integer.MAX_VALUE;
         int indiceMenor = 0;

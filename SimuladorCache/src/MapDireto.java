@@ -37,7 +37,11 @@ public class MapDireto implements Mapeamento{
         }else{ 
             System.out.println(" -> HIT -> linha "+(this.blocoToLinha(endereco)+1));
         }
-    }//
+    }
+    /**
+     * Grava no bloco e na memoria o novo valor
+     * substitui na cache conforme politica de substituição
+     */
     @Override
     public void write(int endereco, int valor){
 //        GRAVA NA MEMORIA
