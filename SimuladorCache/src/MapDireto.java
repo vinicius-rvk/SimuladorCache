@@ -17,6 +17,7 @@ public class MapDireto implements Mapeamento{
     public int blocoToLinha(int endereco){
         return memoria.getBloco(endereco).getChave()%cache.getQtdLinha();
     }
+    @Override
     public void read(int endereco){
         if(!cache.getEndereco(endereco)){
             System.out.println("MISS -> alocado na linha "+(this.blocoToLinha(endereco)+1)+" o bloco "+memoria.getBloco(endereco).getChave());
@@ -35,6 +36,7 @@ public class MapDireto implements Mapeamento{
 //       MUDA NA CACHE
         cache.setLinha(blocoToLinha(endereco), novo);
     }
+    @Override
     public void show(){
         cache.show();
         memoria.show();
